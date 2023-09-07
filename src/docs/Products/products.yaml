@@ -1,0 +1,273 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+  description: API Wine Products
+tags:
+  - name: Products
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Get all products or limit
+      operationId: listLimit
+      parameters:
+        - name: limit
+          in: query
+          description: Number of products to return (optional)
+          schema:
+            type: integer
+        - name: query
+          in: query
+          description: Query string for filtering (optional)
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: Sort order for the results (optional)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+    post:
+      tags:
+        - Products    
+      summary: Create a new product
+      operationId: save
+      requestBody:
+        description: Product object that needs to be added
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  product:
+                    $ref: '#/components/schemas/Product'
+                  message:
+                    type: string
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+  /api/products/{pid}:
+    get:
+      tags:
+        - Products    
+      summary: Get a product by ID
+      operationId: getOne
+      parameters:
+        - name: pid
+          in: path
+          description: ID of the product to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  product:
+                    $ref: '#/components/schemas/Product'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    put:
+      tags:
+        - Products
+      summary: Update a product by ID
+      operationId: update
+      parameters:
+        - name: pid
+          in: path
+          description: ID of the product to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated product object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateProduct'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  product:
+                    $ref: '#/components/schemas/Product'
+                  message:
+                    type: string
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    delete:
+      tags:
+        - Products
+      summary: Delete a product by ID
+      operationId: deleteOne
+      parameters:
+        - name: pid
+          in: path
+          description: ID of the product to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: ObjectID
+          description: id autogenerado por Mongo.
+        title:
+          type: string
+          description: titulo del producto.
+        description:
+          type: string
+          description: descripcion completa del producto.
+        code:
+          type: string
+          description: codigo unico del producto.
+        price: 
+          type: Number
+          description: precio del producto.
+        status:
+          type: string
+          description: estado del producto (activo/baja).
+        stock: 
+          type: Number
+          description: stock del producto.
+        category:
+          type: string
+          description: categoria del producto.
+        thumbnail:
+          type: string
+          description: imagenes del producto.
+      example:
+        _id: ObjectId("644d3769e210e356c943c32f")
+        title: "producto 1"
+        description: "Este es el producto 1 agregado"
+        code: "abc1"
+        price: 100
+        status: "activo"
+        stock: 25
+        category: "Cervezas"
+        thumbnail: [image1, imagen2]
+  requestBodies:
+    updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: titulo del producto.
+        description:
+          type: string
+          description: descripcion completa del producto.
+        code:
+          type: string
+          description: codigo unico del producto.
+        price: 
+          type: Number
+          description: precio del producto.
+        status:
+          type: string
+          description: estado del producto (activo/baja).
+        stock: 
+          type: Number
+          description: stock del producto.
+        category:
+          type: string
+          description: categoria del producto.
+        thumbnail:
+          type: string
+          description: imagenes del producto.
+      example:
+        title: "Cerveza Heineken lata"
+        description: "Este es el producto 2 agregado"
+        code: "abc2"
+        price: 150
+        status: "activo"
+        stock: 120
+        category: "Cervezas"
+        thumbnail: [image1, imagen2]        

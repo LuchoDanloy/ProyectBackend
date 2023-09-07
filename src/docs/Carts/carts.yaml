@@ -1,0 +1,377 @@
+openapi: 3.0.0
+info:
+  title: Cart API
+  version: 1.0.0
+  description: API for managing carts and purchases
+tags:
+  - name: Carts
+paths:
+  /api/carts:
+    get:
+      tags:
+        - Carts
+      summary: Get all carts
+      operationId: list
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  carts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    post:
+      tags:
+        - Carts
+      summary: Create a new cart
+      operationId: saveCart
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+  /api/carts/{cid}:
+    get:
+      tags:
+        - Carts
+      summary: Get a cart by ID
+      operationId: getOne
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    delete:
+      tags:
+        - Carts
+      summary: Remove all products from the cart
+      operationId: deleteAllProductsCart
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    put:
+      tags:
+        - Carts
+      summary: Update products in the cart
+      operationId: updateProductsCart
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated cart object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+  /api/carts/{cid}/product/{pid}:
+    post:
+      tags:
+        - Carts
+      summary: Add a product to the cart
+      operationId: saveProductCart
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart to add the product to
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          description: ID of the product to add to the cart
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+  /api/carts/{cid}/products/{pid}:
+    delete:
+      tags:
+        - Carts
+      summary: Remove a product from the cart
+      operationId: deleteProductCart
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          description: ID of the product to remove from the cart
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+    put:
+      tags:
+        - Carts
+      summary: Update the quantity of a product in the cart
+      operationId: updateProductQuantity
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          description: ID of the product to update the quantity for
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated product quantity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateCart'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+  /api/carts/{cid}/purchase:
+    post:
+      tags:
+        - Carts
+      summary: Make a purchase from the cart
+      operationId: savePurchase
+      parameters:
+        - name: cid
+          in: path
+          description: ID of the cart to make the purchase from
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: ZodError
+        '401':
+          description: Login failed o Invalid Password 
+        '404':
+          description: not found
+        '500':
+          description: Error interno del servidor, usualmente generado por una query defectuosa o un fallo de conexion con la base de datos.
+
+components:
+  schemas:
+    Cart:
+      type: Object
+      properties:
+        id:
+          type: ObjectID
+          description: id autogenerado por Mongo.
+        products:
+          type: array
+          description: Arreglo de productos que va a contener el carrito junto con su cantidad.
+          items:
+            $ref: '#/components/schemas/CartItem'
+    CartItem:
+      type: object
+      properties:
+        product:
+          type: ObjectID
+          description: id del producto de la DB.
+        quantity:
+          type: integer
+          description: cantidad.
+  requestBodies:
+    updateCart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+      example:
+        products: [
+                {
+                    "product": "644d3769e210e356c943c32f",
+                    "quantity": 66
+                },
+                {
+                    "product": "644ee01e618db73a4099e2d5",
+                    "quantity": 33
+                },
+                {
+                    "product": "64566b77618db73a40439d2b",
+                    "quantity": 11
+                },
+                {
+                    "product": "64566c53618db73a40441568",
+                    "quantity": 22
+                }
+            ]
