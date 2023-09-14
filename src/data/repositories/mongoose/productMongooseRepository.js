@@ -4,11 +4,30 @@ import Product from '../../../domine/entities/product.js';
 class productMongooseRepository{
 
     async getProducts(limit, query, sort){
-        try{    
-              
-            const filtro = eval("({" + query + "})");
+        try{      
 
-            const productDocument = await productSchema.aggregate([
+            const aggregationPipeline = [];
+            let filtro;
+
+            const queryParts = query.split(':');
+
+            if (queryParts.length === 2) {
+                filtro = {
+                    [queryParts[0]]: queryParts[1]
+                };
+        
+            }
+
+            // Agrega la etapa de $match si el filtro no está vacío
+            if (Object.keys(filtro).length > 0) {
+                aggregationPipeline.push({
+                    $match: filtro, 
+                });
+
+            }
+
+            // Agrega limit y sort
+            aggregationPipeline.push(
                 {
                     $limit: parseInt(limit)
                 },
@@ -16,12 +35,10 @@ class productMongooseRepository{
                     $sort: {
                         price: sort
                     }
-                },
-                {
-                    $match: filtro
-                },
-            ]);
+                }
+            );
 
+            const productDocument = await productSchema.aggregate(aggregationPipeline);
             
             const products = productDocument.map(document => new Product({
                 id: document._id,

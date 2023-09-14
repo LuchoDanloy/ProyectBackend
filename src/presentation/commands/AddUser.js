@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import UserManager from '../../domine/managers/userManager.js'
+import { createHash } from "../../utils/index.js";
 
 const AddUserCommand = new Command('addUser');
 
@@ -19,6 +20,7 @@ AddUserCommand
       ...env,
       age: +env.age,
       isAdmin: env.isAdmin === 'true',
+      password: await createHash(env.password, 10)
     };
 
     const manager = new UserManager();

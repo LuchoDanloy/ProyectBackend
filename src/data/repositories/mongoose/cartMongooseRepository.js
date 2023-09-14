@@ -1,5 +1,5 @@
 import cartSchema from  "../../models/mongoose/cartSchema.js"
-
+import Cart from '../../../domine/entities/cart.js';
 class cartMongooseRepository{
 
     async getCarts(){
@@ -38,10 +38,10 @@ class cartMongooseRepository{
         try{  
             const cartDocument = await cartSchema.create(cart);
 
-            return {
-                id: cartDocument._id,
-                products: cartDocument.products
-            } 
+            return new Cart({
+                id: cartDocument?.id,
+                products: cartDocument?.products
+            }); 
         }
         catch(error){
             console.log(error);
@@ -52,6 +52,16 @@ class cartMongooseRepository{
 
         try{
             return cartSchema.updateOne({_id: idCart}, newCart);
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
+
+    async deleteCart(idCart){
+
+        try{
+            return cartSchema.deleteOne({_id: idCart});
         }
         catch(error){
             console.error(error);

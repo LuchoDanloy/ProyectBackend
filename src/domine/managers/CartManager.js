@@ -54,11 +54,11 @@ class CartManager{
             //SI EL CARRITO NO EXISTE DAMOS AVISO Y SALIMOS
             if(!cartProducts){
                 return `El Carrito ${cid} no existe!`;
-            } 
+            }           
 
             //Para saber si existe el id de producto dentro del arreglo de "products"
-            const productExist = cartProducts.products.find((producto) => producto.product === pid);
-
+            const productExist = cartProducts.products.find((producto) => producto.product.id === pid);
+            
             //si el producto existe hacemos un update
             if(productExist){
 
@@ -135,6 +135,26 @@ class CartManager{
             //UNA VEZ QUE SE QUE EXISTE LIMPIO EL ARRAY DE PRODUCTS.
             cartProducts.products=[];
             return this.cartRepository.updateCart(cid, cartProducts);
+        }
+        catch(error){
+            console.error(error);
+        }  
+
+    }
+
+    async deleteCart(cid){
+
+        try{   
+            //PRIMERO RECUPERO EL CARRITO CON SUS PRODUCTOS
+            let cartProducts = await this.cartRepository.getCartById(cid);
+
+            //SI EL CARRITO NO EXISTE DAMOS AVISO Y SALIMOS
+            if(!cartProducts){
+                return `El Carrito ${cid} no existe!`;
+            }
+            
+            //UNA VEZ QUE SE QUE EXISTE LO ELIMINO
+            return this.cartRepository.deleteCart(cid);
         }
         catch(error){
             console.error(error);
@@ -256,6 +276,9 @@ class CartManager{
                 'ticket.hbs',
                 context
             )
+
+            //ELIMINAMOS EL CARRITO
+            await this.deleteCart(cid)
 
             return ticket  
 

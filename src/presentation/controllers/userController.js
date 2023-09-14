@@ -37,7 +37,6 @@ export const save = async (req, res, next) =>
   try{
     const manager = new UserManager();
     const user = await manager.create(req.body);
-  
     res.send({ status: 'success', user, message: 'User created.' })
   }catch(e){
     next(e);

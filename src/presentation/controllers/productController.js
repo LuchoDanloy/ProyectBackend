@@ -27,6 +27,7 @@ export const save = async (req, res)=>{
     const manager = new ProductManager();
 
     const product = await manager.addProduct(req.body)
+
     res.send({status: 'success', product, message: 'Product created.' })
 };
 
